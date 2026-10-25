@@ -359,7 +359,7 @@ This project is designed to develop practical skills in:
 
 ## 👨‍💻 Author
 
-**Satyam Kumar**
+**Shalini Singh**
 
 Data Analyst | Data Engineering | Azure Data Platform
 
