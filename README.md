@@ -1,372 +1,535 @@
-# 🚀 Adventure Works | End-to-End Azure Data Engineering Project
+<div align="center">
 
-**Building a cloud-based data engineering pipeline using Azure Data Factory, Azure Data Lake Storage Gen2, Azure Databricks, Apache Spark, Azure Synapse Analytics, and Power BI.**
+# 🚴 AdventureWorks – End-to-End Azure Data Engineering Project
 
-<p align="center">
+**Pull data from GitHub → clean it with Spark → serve it with SQL → ready for Power BI**
 
-  <img src="https://img.shields.io/badge/Cloud-Microsoft%20Azure-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white" alt="Microsoft Azure" />
-  <img src="https://img.shields.io/badge/Architecture-Medallion-6C5CE7?style=for-the-badge" alt="Medallion Architecture" />
-  <img src="https://img.shields.io/badge/Processing-Apache%20Spark-E25A1C?style=for-the-badge&logo=apachespark&logoColor=white" alt="Apache Spark" />
-  <img src="https://img.shields.io/badge/Status-In%20Progress-orange?style=for-the-badge" alt="Project status: In Progress" />
+![Azure Data Factory](https://img.shields.io/badge/Azure_Data_Factory-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)
+![Azure Databricks](https://img.shields.io/badge/Azure_Databricks-FF3621?style=for-the-badge&logo=databricks&logoColor=white)
+![Azure Synapse](https://img.shields.io/badge/Azure_Synapse_Analytics-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)
+![PySpark](https://img.shields.io/badge/PySpark-E25A1C?style=for-the-badge&logo=apachespark&logoColor=white)
+![ADLS Gen2](https://img.shields.io/badge/ADLS_Gen2-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)
+![SQL](https://img.shields.io/badge/T--SQL-CC2927?style=for-the-badge&logo=microsoftsqlserver&logoColor=white)
 
-</p>
+</div>
 
 ---
 
 ## 📌 Table of Contents
 
-- [Project Overview](#-project-overview)
-- [Business Problem](#-business-problem)
-- [Project Objectives](#-project-objectives)
-- [Data Source](#-data-source)
-- [Technology Stack](#-technology-stack)
-- [Data Architecture](#-data-architecture)
-- [End-to-End Workflow](#-end-to-end-workflow)
-- [Medallion Architecture](#-medallion-architecture)
-- [Data Ingestion with Azure Data Factory](#-data-ingestion-with-azure-data-factory)
-- [Data Transformation with Databricks](#-data-transformation-with-databricks)
-- [Analytics and Reporting](#-analytics-and-reporting)
-- [Repository Structure](#-repository-structure)
-- [Implementation Roadmap](#-implementation-roadmap)
-- [Security and Cost Management](#-security-and-cost-management)
-- [Key Learning Outcomes](#-key-learning-outcomes)
-- [Author](#-author)
+1. [What is this project?](#-what-is-this-project)
+2. [Architecture](#-architecture)
+3. [Tools used](#-tools-used)
+4. [The dataset](#-the-dataset)
+5. [Full flow, step by step (with screenshots)](#-full-flow-step-by-step)
+6. [Problems I faced and how I fixed them](#-problems-i-faced-and-how-i-fixed-them)
+7. [What I learned](#-what-i-learned)
+8. [Project status](#-project-status)
+9. [Repository structure](#-repository-structure)
+10. [How to run it yourself](#-how-to-run-it-yourself)
+11. [Security note](#-security-note)
 
 ---
 
-## 🎯 Project Overview
+## 🎯 What is this project?
 
-Adventure Works is an end-to-end data engineering project designed to demonstrate how business data can be ingested, stored, transformed, and prepared for analytics using Microsoft Azure services.
+Companies have data in many places. A data engineer's job is to **collect it, clean it, and make it easy to use** for analysts and managers.
 
-The solution uses CSV files containing information about customers, products, territories, sales, returns, and calendar dates. Azure Data Factory orchestrates data ingestion, Azure Data Lake Storage Gen2 organizes the data into processing layers, and Azure Databricks with Apache Spark performs data transformations.
+In this project I built that whole journey on **Microsoft Azure**, using the popular **AdventureWorks** bike-company data:
 
-The curated data is intended to be served through Azure Synapse Analytics and consumed through Power BI reports.
-
-The project follows the **Medallion Architecture — Bronze, Silver, and Gold** — to separate raw data from cleaned and analytics-ready data.
-
-**Project status:** In progress. This repository documents the solution design and implementation as the individual components are developed and validated.
-
-## 💼 Business Problem
-
-Business data is often distributed across multiple files and related entities. Before it can support reliable reporting, it needs to be ingested consistently, organized, validated, and transformed into a structure suitable for analysis.
-
-This project addresses that challenge by designing a repeatable data pipeline that can:
-
-- Ingest multiple source files without creating a separate pipeline for every file.
-- Preserve raw data for traceability and reprocessing.
-- Clean and transform source data using distributed processing.
-- Organize related sales, customer, product, territory, and calendar information.
-- Prepare curated datasets for analytical queries and business reporting.
-
-## 🎯 Project Objectives
-
-- Build an end-to-end cloud data engineering workflow.
-- Implement parameterized and reusable ingestion pipelines.
-- Apply Medallion Architecture using Bronze, Silver, and Gold layers.
-- Use Apache Spark and PySpark for data transformation.
-- Practice secure access between Azure services.
-- Prepare structured data for analytical workloads.
-- Integrate the data platform with Power BI for business intelligence.
-
-## 📂 Data Source
-
-The project uses the **Adventure Works dataset**, a sample business dataset commonly used for learning relational data modeling, sales analysis, and data engineering.
-
-The source files cover business entities such as:
-
-| Data entity | Purpose |
+| Question | Answer |
 |---|---|
-| Calendar | Date-based analysis |
-| Customers | Customer attributes and segmentation |
-| Products | Product-level information |
-| Product Categories | Product classification |
-| Product Subcategories | Detailed product classification |
-| Territories | Geographic sales analysis |
-| Sales | Sales transactions and performance |
-| Returns | Product return analysis |
+| Where does the data come from? | CSV files stored in a **GitHub** repo, pulled over an HTTP connection (like a real API) |
+| How is it moved? | **Azure Data Factory** copies the files into a data lake |
+| How is it cleaned? | **Azure Databricks** (PySpark) transforms the data |
+| Where do analysts get it? | **Azure Synapse Analytics** serves it with SQL |
+| How is it shown? | **Power BI** dashboards (next step) |
 
-The sales data includes records associated with 2015, 2016, and 2017.
+> [!TIP]
+> **Why not just upload the CSV files by hand?**
+> Because in real jobs, data usually comes from an API or another system, not from your laptop. Pulling it automatically is the skill that companies look for.
 
-The actual CSV file names and source URLs will be documented alongside the ingestion configuration so that the project can be reproduced.
+---
 
-**Dataset source:** [Adventure Works sample databases — Microsoft Learn](https://learn.microsoft.com/en-us/sql/samples/adventureworks-install-configure)
-
-> Note: The Microsoft sample database page provides Adventure Works database downloads and configuration guidance. The exact GitHub repository used for this project's CSV files should be linked separately once confirmed.
-
-## 🛠️ Technology Stack
-
-| Technology | Role in the project |
-|---|---|
-| Microsoft Azure | Cloud platform |
-| Azure Data Factory | Ingestion and pipeline orchestration |
-| Azure Data Lake Storage Gen2 | Raw, transformed, and curated data storage |
-| Azure Databricks | Distributed data processing |
-| Apache Spark / PySpark | Data reading, transformation, and writing |
-| Microsoft Entra ID | Application identity and authentication |
-| Azure Synapse Analytics | Analytical data serving and warehousing |
-| Power BI | Business intelligence and visualization |
-| Git and GitHub | Version control and project documentation |
-
-## 🏗️ Data Architecture
-
-The architecture below represents the intended end-to-end design. Components will be marked as implemented only after they have been tested successfully.
+## 🏗 Architecture
 
 ```mermaid
-flowchart TD
-    A["Adventure Works CSV Files<br/>GitHub Repository"] --> B["Azure Data Factory<br/>HTTP Linked Service"]
+flowchart LR
+    A["🐙 GitHub<br/>CSV files<br/>(HTTP source)"] -->|"Azure Data Factory<br/>Lookup + ForEach + Copy"| B[("🥉 Bronze<br/>raw data")]
+    B -->|"Azure Databricks<br/>PySpark"| C[("🥈 Silver<br/>clean data")]
+    C -->|"Azure Synapse<br/>serverless SQL"| D[("🥇 Gold<br/>views / external tables")]
+    D --> E["📊 Power BI"]
 
-    B --> C["Lookup Activity<br/>Read JSON Configuration"]
-    C --> D["ForEach Activity<br/>Parameterized Copy Pipeline"]
-    D --> E["Azure Data Lake Storage Gen2<br/>BRONZE: Raw CSV Files"]
-
-    E --> F["Azure Databricks<br/>Apache Spark / PySpark"]
-    F --> G["SILVER: Cleaned Data<br/>Parquet Format"]
-
-    G --> H["GOLD: Curated Data<br/>Analytics-Ready Datasets"]
-    H --> I["Azure Synapse Analytics<br/>SQL Analytics Layer"]
-    I --> J["Power BI<br/>Reports and Dashboards"]
-
-    style A fill:#E8F3FF,stroke:#0078D4,color:#172B4D
-    style B fill:#E8F3FF,stroke:#0078D4,color:#172B4D
-    style E fill:#FFF1D6,stroke:#C58B00,color:#4A3400
-    style G fill:#E3F5E8,stroke:#269653,color:#163D26
-    style H fill:#F0E8FF,stroke:#805AD5,color:#32215C
-    style J fill:#FFF0E6,stroke:#E66B25,color:#5A2B0A
+    subgraph L["Azure Data Lake Storage Gen2"]
+        B
+        C
+        D
+    end
 ```
 
-### Architecture at a glance
+### The Medallion Architecture in simple words
 
-1. **Source:** CSV files hosted in GitHub.
-2. **Ingestion:** Azure Data Factory retrieves source files over HTTP.
-3. **Orchestration:** A JSON configuration and a ForEach activity drive reusable, parameterized copy operations.
-4. **Bronze:** Original source files are stored in Azure Data Lake Storage Gen2.
-5. **Silver:** Databricks and Spark clean and transform the raw data.
-6. **Gold:** Curated datasets are prepared for business analytics.
-7. **Serving:** Azure Synapse Analytics provides the intended SQL analytics layer.
-8. **Visualization:** Power BI connects to the analytical data to produce business reports.
+Think about **water**:
 
-The Gold-layer implementation and downstream integrations will be documented as they are completed.
-
-## 🔄 End-to-End Workflow
-
-### Phase 1 — Azure Environment and Storage Setup
-
-The foundation of the project consists of an Azure resource group, Azure Data Lake Storage Gen2, and the required service configurations.
-
-Storage configuration used in the project:
-
-- **Storage account:** `awstoragedatalake01`
-- **Region:** West India
-- **Performance:** Standard
-- **Redundancy:** Locally redundant storage (LRS)
-- **Hierarchical namespace:** Enabled
-- **Data organization:** Bronze, Silver, Gold, and a configuration area for ingestion parameters
-
-The hierarchical namespace supports directory-based organization within the data lake.
-
-### Phase 2 — Data Ingestion with Azure Data Factory
-
-The first ingestion step is to connect Azure Data Factory to the GitHub-hosted CSV files using an HTTP linked service.
-
-The pipeline uses a Copy activity to transfer source data into the Bronze layer without applying business transformations.
-
-#### Static pipeline
-
-A static pipeline is used initially to validate connectivity, source configuration, the destination dataset, and the first successful file transfer.
-
-#### Dynamic pipeline
-
-The solution then moves towards a reusable, parameterized pipeline to avoid repeating the same Copy activity for every file.
-
-The intended design includes:
-
-- An HTTP linked service for the source.
-- An Azure Data Lake Storage Gen2 linked service for the destination.
-- Parameterized source and destination datasets.
-- A JSON configuration containing the source path, destination folder, and file name for each iteration.
-- A Lookup activity to read the JSON configuration.
-- A ForEach activity to iterate through the configuration entries.
-- A Copy activity inside the ForEach activity to transfer each file.
-- Pipeline execution monitoring and validation of the files in Bronze.
-
-This design makes it easier to add or manage files without duplicating the complete pipeline logic.
-
-### Phase 3 — Bronze Layer: Raw Data Storage
-
-The Bronze layer stores the ingested CSV files in their original form.
-
-Its primary purpose is to preserve the source data before transformation.
-
-Key principles:
-
-- Retain the original source structure.
-- Organize files into logical folders.
-- Avoid applying business transformations during ingestion.
-- Keep source data available for validation and reprocessing.
-
-### Phase 4 — Silver Layer: Data Transformation
-
-Azure Databricks and Apache Spark are used to read the Bronze CSV files, apply transformations, and write the processed datasets to Silver.
-
-The transformation workflow covers:
-
-- Reading CSV files with headers and schema inference where appropriate.
-- Loading related business datasets into Spark DataFrames.
-- Applying date transformations, including extracting month and year from calendar dates.
-- Practicing PySpark column operations and built-in functions.
-- Writing transformed data in Parquet format.
-- Validating the output and organizing the transformed datasets.
-
-Parquet is a column-oriented storage format suitable for analytical workloads.
-
-Additional data-quality checks, type validation, null handling, and business rules can be documented as they are implemented.
-
-### Phase 5 — Gold Layer: Curated Data
-
-The Gold layer is intended to contain datasets prepared for business analysis.
-
-Potential analytical models include:
-
-- Sales performance by date, product, and territory.
-- Customer-level sales analysis.
-- Product category and subcategory performance.
-- Product return analysis.
-- Sales and return trends over time.
-
-The final Gold tables, business rules, and schema will be documented after the transformations and data models are implemented and validated.
-
-### Phase 6 — Azure Synapse Analytics
-
-Azure Synapse Analytics is the planned serving layer for analytical data.
-
-The implementation will document:
-
-- The selected Synapse SQL architecture.
-- Table creation and loading strategy.
-- Relationships between fact and dimension tables.
-- Analytical queries and validation.
-- The connection used by reporting tools.
-
-The final serving design will reflect the Synapse components actually deployed.
-
-### Phase 7 — Power BI Reporting
-
-Power BI is the intended reporting layer for business users.
-
-Potential reporting areas include:
-
-- Sales trends and performance.
-- Customer and territory analysis.
-- Product and category performance.
-- Product returns and return trends.
-
-Report screenshots, data model details, and dashboard findings will be added after the reports are built and validated.
-
-## 🥉 Medallion Architecture
-
-| Layer | Data state | Primary responsibility |
+| Layer | Like water... | In my project |
 |---|---|---|
-| Bronze | Raw | Preserve source data |
-| Silver | Cleaned and transformed | Improve consistency and usability |
-| Gold | Curated | Support analytical queries and reporting |
+| 🥉 **Bronze** | River water, straight from the source | Exact copy of the files from GitHub. **Nothing is changed.** |
+| 🥈 **Silver** | Filtered, clean water | Data is cleaned and improved with Spark (new columns, fixed formats, joins, totals) |
+| 🥇 **Gold** | Bottled water, ready to drink | Business-ready tables and views that analysts can use directly |
 
-The separation of layers improves maintainability, traceability, and the ability to reprocess data when transformation rules change.
-
-## 📁 Repository Structure
-
-The repository will be organized as follows as implementation artifacts become available:
-
-```text
-adventure-works-azure-data-engineering/
-│
-├── README.md
-├── .gitignore
-│
-├── docs/
-│   ├── architecture-diagram.png
-│   └── project-overview.md
-│
-├── adf/
-│   ├── pipelines/
-│   ├── datasets/
-│   ├── linked-services/
-│   └── parameters/
-│
-├── databricks/
-│   └── notebooks/
-│
-├── synapse/
-│   └── sql/
-│
-├── powerbi/
-│   └── screenshots/
-│
-└── screenshots/
-    ├── azure-storage/
-    ├── adf-pipelines/
-    └── databricks/
-```
-
-Only export and commit actual implementation artifacts. Do not commit secrets or sensitive connection details. Where configuration exports contain sensitive information, sanitize them before committing.
-
-## 🗺️ Implementation Roadmap
-
-The following checklist tracks the planned project milestones. Check off a task only after the corresponding implementation has been verified.
-
-- [ ] Complete and validate the Azure environment setup.
-- [ ] Configure Azure Data Lake Storage Gen2.
-- [ ] Establish source and destination linked services in Azure Data Factory.
-- [ ] Validate a static CSV ingestion pipeline.
-- [ ] Implement JSON-driven, parameterized ingestion.
-- [ ] Validate Lookup, ForEach, and Copy activity execution.
-- [ ] Verify source files in the Bronze layer.
-- [ ] Complete Databricks workspace and secure storage access configuration.
-- [ ] Read Bronze datasets using Spark.
-- [ ] Implement and validate Silver-layer transformations.
-- [ ] Build and validate Gold-layer analytical datasets.
-- [ ] Implement the Synapse analytical serving layer.
-- [ ] Build and validate Power BI reports.
-- [ ] Add architecture diagrams, screenshots, and technical documentation.
-- [ ] Document data-quality checks and end-to-end validation results.
-
-## 🔐 Security and Cost Management
-
-Security and cost control are important considerations when building cloud data platforms.
-
-- Use Microsoft Entra ID and appropriate access permissions where supported.
-- Avoid hardcoding credentials, tokens, or client secrets in notebooks and pipeline exports.
-- Keep local environment files and sensitive configuration out of Git.
-- Follow least-privilege access principles.
-- Monitor Azure resource usage and shut down or remove resources when they are no longer needed.
-- Review pricing before deploying or running paid Azure services.
-
-Azure trial credits and free-service allowances are subject to their applicable terms and limits. Always verify the current pricing and billing settings in your own subscription.
-
-## 📚 Key Learning Outcomes
-
-This project is designed to develop practical skills in:
-
-- Cloud data ingestion and orchestration.
-- Parameterized pipelines and configuration-driven processing.
-- Data Lake Storage Gen2 and hierarchical data organization.
-- Medallion Architecture.
-- Apache Spark and PySpark transformations.
-- Parquet-based analytical storage.
-- Identity-based access and secure cloud configuration.
-- SQL analytics and data warehouse integration.
-- Power BI reporting and end-to-end data platform design.
-- Git-based project documentation and version control.
-
-## 👨‍💻 Author
-
-**Shalini Singh**
-
-Data Analyst | Data Engineering | Azure Data Platform
-
-This project is part of my hands-on learning journey in cloud data engineering and analytics.
+Why three layers? If something goes wrong in Silver or Gold, I can always go back to Bronze and start again, because the original data is still safe.
 
 ---
 
-⭐ If you find this project useful, feel free to explore the repository and share feedback.
+## 🧰 Tools used
 
-**Note:** This project is a work in progress. Architecture diagrams describe the intended solution; implementation status and results will be updated as each stage is completed.
+| Tool | What it does here (easy words) |
+|---|---|
+| **GitHub** | Stores the source CSV files. This is where the data starts. |
+| **Azure Data Factory (ADF)** | The "delivery truck". Moves data from GitHub into the data lake, automatically. |
+| **Azure Data Lake Storage Gen2** | The "warehouse". Has three containers: `bronze`, `silver`, `gold`. |
+| **Azure Databricks** | The "factory". Uses Spark (Python) to clean and transform big data fast. |
+| **Microsoft Entra ID (App Registration)** | The "ID card" that lets Databricks safely enter the data lake. |
+| **Azure Synapse Analytics** | The "shop window". Lets analysts query the final data with simple SQL. |
+| **Managed Identity** | The "ID card" that lets Synapse safely enter the data lake (no passwords needed). |
+| **Power BI** | Charts and dashboards (planned next step). |
+
+---
+
+## 📦 The dataset
+
+**AdventureWorks** is a famous sample dataset from Microsoft. It is about a company that sells **bikes, components, clothing and accessories**.
+
+I picked it because it has **many related tables**, just like real company data. That means lots of practice with joins and lookups.
+
+📁 The files are in the [`data/`](data/) folder. Full column descriptions are in the [data dictionary](data/README.md).
+
+| File | Rows | What it contains |
+|---|---:|---|
+| `AdventureWorks_Calendar.csv` | 912 | One row per day (1 Jan 2015 → 30 Jun 2017) |
+| `AdventureWorks_Customers.csv` | 18,148 | Customer details (name, income, education, job...) |
+| `AdventureWorks_Products.csv` | 293 | Product details (name, color, cost, price...) |
+| `AdventureWorks_Product_Categories.csv` | 4 | Bikes, Components, Clothing, Accessories |
+| `AdventureWorks_Product_Subcategories.csv` | 37 | Groups inside each category (e.g. Mountain Bikes) |
+| `AdventureWorks_Territories.csv` | 10 | Sales regions and countries |
+| `AdventureWorks_Sales_2015.csv` | 2,630 | 🧾 **Fact table**: sales of 2015 |
+| `AdventureWorks_Sales_2016.csv` | 23,935 | 🧾 **Fact table**: sales of 2016 |
+| `AdventureWorks_Sales_2017.csv` | 29,481 | 🧾 **Fact table**: sales of 2017 (until 30 Jun) |
+| `AdventureWorks_Returns.csv` | 1,809 | 🧾 **Fact table**: products that customers returned |
+
+**In total: 56,046 sales rows** (25,164 unique orders) across 3 years.
+
+> **Fact vs Dimension (quick explanation)**
+> - **Fact tables** = events that happen again and again (a sale, a return). They are big.
+> - **Dimension tables** = descriptions of things (who is the customer? what is the product?). They are small.
+
+### How the tables connect
+
+```mermaid
+erDiagram
+    CUSTOMERS ||--o{ SALES : "places"
+    PRODUCTS ||--o{ SALES : "is sold in"
+    TERRITORIES ||--o{ SALES : "happens in"
+    CALENDAR ||--o{ SALES : "on date"
+    PRODUCTS ||--o{ RETURNS : "is returned in"
+    TERRITORIES ||--o{ RETURNS : "happens in"
+    PRODUCT_SUBCATEGORIES ||--o{ PRODUCTS : "groups"
+    PRODUCT_CATEGORIES ||--o{ PRODUCT_SUBCATEGORIES : "groups"
+
+    CUSTOMERS { int CustomerKey PK }
+    PRODUCTS { int ProductKey PK }
+    TERRITORIES { int SalesTerritoryKey PK }
+    SALES { string OrderNumber
+            int ProductKey FK
+            int CustomerKey FK
+            int TerritoryKey FK }
+    RETURNS { int ProductKey FK
+              int TerritoryKey FK }
+```
+
+---
+
+## 🚀 Full flow, step by step
+
+### Step 1️⃣ – Create the Azure resources
+
+Everything lives inside one **Resource Group** (think of it as a folder that holds all the project's Azure services). It contains:
+
+- a **Storage Account** with hierarchical namespace turned on (this makes it a *Data Lake Gen2*),
+- an **Azure Data Factory**,
+- an **Azure Databricks** workspace,
+- later, an **Azure Synapse** workspace.
+
+<p align="center"><img src="images/01-create-storage-account.png" width="800" alt="Create storage account"></p>
+<p align="center"><em>Creating the storage account inside the <code>Adventure_Works_Project</code> resource group.</em></p>
+
+<p align="center"><img src="images/02-resource-group-overview.png" width="800" alt="Resource group overview"></p>
+<p align="center"><em>The resource group with Databricks, Data Factory and the Data Lake storage account.</em></p>
+
+Inside the data lake, I create three containers: **`bronze`**, **`silver`**, and **`gold`**.
+
+---
+
+### Step 2️⃣ – Bronze layer: pull data from GitHub with Azure Data Factory
+
+**Goal:** copy all CSV files from GitHub into the `bronze` container, without changing anything.
+
+**The easy but bad way:** make 10 Copy activities, one for each file. ❌ Boring, and hard to maintain.
+
+**The smart way (what I built):** make **one dynamic pipeline** that works for every file. ✅
+
+```mermaid
+flowchart LR
+    A["📄 JSON file<br/>list of all files"] --> B["🔍 Lookup<br/>reads the list"]
+    B --> C["🔁 ForEach<br/>one loop per file"]
+    C --> D["📥 Copy data<br/>GitHub → bronze"]
+```
+
+How it works:
+
+1. **Lookup** reads a small JSON file. It is a list, one item per CSV file.
+2. **ForEach** goes through the list one item at a time.
+3. Inside the loop, a single **Copy data** activity runs. It uses **parameters** for the three things that change each time: *which file to take from GitHub, which folder to save into, and the file name*.
+
+So one Copy activity does the job of ten. If a new file is added, I only add one line to the JSON list. No pipeline change is needed.
+
+<p align="center"><img src="images/03-adf-dynamic-pipeline-run.png" width="900" alt="ADF dynamic pipeline"></p>
+<p align="center"><em><code>dynamicGitToRaw</code> pipeline: Lookup → ForEach → Copy data. All the copy runs succeeded ✅</em></p>
+
+📂 Related ADF objects: pipelines `GitToRaw` and `dynamicGitToRaw`, and datasets `ds_http` (source), `ds_raw` (sink), plus the parameterized `ds_git_dynamic`, `ds_git_parameters` and `ds_sink_dynamic`.
+
+---
+
+### Step 3️⃣ – Silver layer: clean the data with Azure Databricks
+
+**Goal:** read the raw files from `bronze`, clean and improve them with PySpark, and save the result in `silver`.
+
+<p align="center"><img src="images/04-databricks-home.png" width="700" alt="Databricks home"></p>
+<p align="center"><em>The Databricks workspace is ready.</em></p>
+
+#### 3.1 Give Databricks permission to open the data lake
+
+Databricks cannot just walk into the storage account. It needs an **ID card**. I created an **App Registration** in Microsoft Entra ID, and used its *client id*, *client secret* and *tenant id* to log in with OAuth.
+
+<p align="center"><img src="images/05-silver-notebook-storage-access.png" width="900" alt="Notebook storage access"></p>
+<p align="center"><em>Notebook section "DATA ACCESS USING APP". (Secrets are hidden in this screenshot.)</em></p>
+
+```python
+storage_account = "adventureworkdatalake1"
+
+spark.conf.set(f"fs.azure.account.auth.type.{storage_account}.dfs.core.windows.net", "OAuth")
+spark.conf.set(f"fs.azure.account.oauth.provider.type.{storage_account}.dfs.core.windows.net",
+               "org.apache.hadoop.fs.azurebfs.oauth2.ClientCredsTokenProvider")
+spark.conf.set(f"fs.azure.account.oauth2.client.id.{storage_account}.dfs.core.windows.net",
+               "<application-client-id>")
+spark.conf.set(f"fs.azure.account.oauth2.client.secret.{storage_account}.dfs.core.windows.net",
+               dbutils.secrets.get(scope="<scope-name>", key="<secret-key>"))   # never hard-code the secret!
+spark.conf.set(f"fs.azure.account.oauth2.client.endpoint.{storage_account}.dfs.core.windows.net",
+               "https://login.microsoftonline.com/<directory-tenant-id>/oauth2/token")
+```
+
+> [!IMPORTANT]
+> In real projects the secret is stored in a **secret scope / Key Vault**, not typed inside the notebook.
+
+#### 3.2 Read the data
+
+The URL format for the data lake is easy to forget (and often asked in interviews):
+
+```
+abfss://<container>@<storage-account-name>.dfs.core.windows.net/<folder>
+```
+
+<p align="center"><img src="images/06-silver-read-calendar.png" width="900" alt="Read calendar data"></p>
+<p align="center"><em>Reading the Calendar CSV from the <code>bronze</code> container into a Spark DataFrame.</em></p>
+
+Instead of writing one `spark.read` for each file, I used a **loop** that loads every dataset into a Python dictionary:
+
+```python
+dataframes = {}
+
+for folder_path in folders:          # folders = list of bronze folder paths
+    folder_name = folder_path.rstrip("/").split("/")[-1]
+    try:
+        df = (
+            spark.read
+                 .format("csv")
+                 .option("header", "true")
+                 .option("inferSchema", "true")
+                 .load(folder_path)
+        )
+        dataframes[folder_name] = df
+        print(f"Loaded: {folder_name}")
+    except Exception as e:
+        print(f"Could not load {folder_name}: {e}")
+
+print(f"\nSuccessfully loaded {len(dataframes)} datasets.")
+```
+
+<p align="center"><img src="images/07-silver-load-all-datasets-loop.png" width="800" alt="Loop to load all datasets"></p>
+<p align="center"><em>The loop loads all the AdventureWorks datasets in one go.</em></p>
+
+#### 3.3 Transform the data
+
+Examples of transformations:
+
+```python
+from pyspark.sql.functions import col, concat, lit, month
+
+# Customers: build a full name column
+customers = dataframes["AdventureWorks_Customers"].withColumn(
+    "fullname", concat(col("FirstName"), lit(" "), col("LastName"))
+)
+
+# Calendar: add a month column
+calendar = dataframes["AdventureWorks_Calendar"].withColumn("Month", month(col("Date")))
+```
+
+<p align="center"><img src="images/08-silver-customers-fullname.png" width="900" alt="Customers fullname"></p>
+<p align="center"><em>New <code>fullname</code> column on the Customers table.</em></p>
+
+I also used **`groupBy`** to turn thousands of transaction rows into **aggregated numbers** (for example, total orders per day), because reports need totals, not single transactions.
+
+<p align="center"><img src="images/09-orders-over-time-chart.png" width="800" alt="Orders over time"></p>
+<p align="center"><em>Databricks visualization: total orders by order date. Orders grow strongly from mid-2016.</em></p>
+
+The last step of this layer is to write the cleaned data to the **`silver`** container (see [Project status](#-project-status)).
+
+---
+
+### Step 4️⃣ – Gold layer: serve the data with Azure Synapse Analytics
+
+**Goal:** let analysts read the data with plain SQL, without touching Spark or the data lake directly.
+
+I created a **Synapse workspace** (`synapse-adventure-works`). It uses a *Managed Identity*, which works like an ID card that the workspace already has, so no password is needed to read the lake.
+
+<p align="center"><img src="images/10-synapse-create-basics.png" width="800" alt="Synapse create - basics"></p>
+<p align="center"><em>Synapse workspace: basics (resource group, name, region, default data lake).</em></p>
+
+<p align="center"><img src="images/11-synapse-create-security.png" width="800" alt="Synapse create - security"></p>
+<p align="center"><em>Synapse workspace: SQL admin login and security settings.</em></p>
+
+<p align="center"><img src="images/12-synapse-studio-home.png" width="800" alt="Synapse Studio"></p>
+<p align="center"><em>Synapse Studio is ready 🎉</em></p>
+
+To create **external tables** (tables that only point to the files, the data stays in the lake), Synapse needs three things:
+
+| # | Object | In simple words |
+|---|---|---|
+| 1 | **Database scoped credential** | "Which ID card should I use?" (Managed Identity) |
+| 2 | **External data source** | "Where are the files?" (`silver` and `gold` containers) |
+| 3 | **External file format** | "What type of files are they?" (Parquet, Snappy-compressed) |
+
+The full script is here: 👉 [`sql/synapse_setup.sql`](sql/synapse_setup.sql)
+
+```sql
+CREATE DATABASE SCOPED CREDENTIAL cred_adventureworks
+WITH IDENTITY = 'Managed Identity';
+
+CREATE EXTERNAL DATA SOURCE source_silver
+WITH (
+    LOCATION   = 'https://adventureworkdatalake1.dfs.core.windows.net/silver',
+    CREDENTIAL = cred_adventureworks
+);
+
+CREATE EXTERNAL FILE FORMAT format_parquet
+WITH (
+    FORMAT_TYPE      = PARQUET,
+    DATA_COMPRESSION = 'org.apache.hadoop.io.compress.SnappyCodec'
+);
+```
+
+> [!NOTE]
+> For this to work, the Synapse workspace's managed identity must have the **Storage Blob Data Contributor** role on the storage account (Access control (IAM) → Add role assignment).
+
+---
+
+### Step 5️⃣ – Power BI (next step)
+
+Connect Power BI to the Synapse serverless SQL endpoint, load the gold views (facts + dimensions), and build the dashboard. This is the last piece that lets a data engineer help an analyst end to end.
+
+---
+
+## 🛠 Problems I faced and how I fixed them
+
+Real projects never go perfectly. These problems taught me more than the happy path, and they are good interview stories. 💪
+
+<details>
+<summary><b>❌ Problem 1: Azure Databricks workspace deployment failed</b></summary>
+
+<br>
+
+My first Databricks workspace failed with *"The resource write operation failed to complete successfully, because it reached terminal provisioning state 'Failed'"*.
+
+What I did:
+
+1. Read the error and the **Activity log** to find which operation failed.
+2. Checked the **managed resource group** that Databricks created (it already had storage, NAT gateway, etc.).
+3. Tried to open **Cloud Shell** to investigate, but it said the subscription is not registered for the `Microsoft.CloudShell` namespace.
+4. Opened the failed workspace, saw it was stuck in a **failed state**, then **deleted** it.
+5. **Created a new workspace** (`adventure_works_databricks02`) and the validation passed ✅.
+
+<p align="center"><img src="images/t01-databricks-create-first-try.png" width="700"></p>
+<p align="center"><em>First attempt: creating the workspace.</em></p>
+
+<p align="center"><img src="images/t02-databricks-deployment-failed.png" width="700"></p>
+<p align="center"><em>The deployment failed.</em></p>
+
+<p align="center"><img src="images/t03-databricks-managed-resource-group.png" width="700"></p>
+<p align="center"><em>Checking the managed resource group.</em></p>
+
+<p align="center"><img src="images/t04-databricks-managed-storage.png" width="700"></p>
+<p align="center"><em>Managed storage account created by Databricks.</em></p>
+
+<p align="center"><img src="images/t05-activity-log-workspace-failed.png" width="700"></p>
+<p align="center"><em>Activity log: "Create Databricks Workspace" failed.</em></p>
+
+<p align="center"><img src="images/t06-activity-log-deployment-failed.png" width="700"></p>
+<p align="center"><em>Activity log: "Create Deployment" failed.</em></p>
+
+<p align="center"><img src="images/t07-cloud-shell-setup.png" width="500"></p>
+<p align="center"><em>Opening Cloud Shell to investigate.</em></p>
+
+<p align="center"><img src="images/t08-cloud-shell-not-registered.png" width="700"></p>
+<p align="center"><em>Cloud Shell needs the namespace to be registered first.</em></p>
+
+<p align="center"><img src="images/t09-workspace-failed-state.png" width="700"></p>
+<p align="center"><em>The workspace is stuck in a failed state.</em></p>
+
+<p align="center"><img src="images/t10-delete-failed-workspace.png" width="600"></p>
+<p align="center"><em>Deleting the failed workspace.</em></p>
+
+<p align="center"><img src="images/t11-databricks-recreate-validation-passed.png" width="700"></p>
+<p align="center"><em>Creating it again: validation succeeded ✅</em></p>
+
+**Lesson:** a failed deployment leaves a broken resource behind. Read the activity log, delete the failed resource, and create it again.
+
+</details>
+
+<details>
+<summary><b>❌ Problem 2: <code>NameError: name 'dataframes' is not defined</code></b></summary>
+
+<br>
+
+I ran the cell that uses `dataframes["AdventureWorks_Calendar"]` **before** the cell that creates the `dataframes` dictionary.
+
+**Fix:** run the notebook cells in the right order (or use **Run all**).
+
+<p align="center"><img src="images/e01-error-dataframes-not-defined.png" width="700"></p>
+
+</details>
+
+<details>
+<summary><b>❌ Problem 3: <code>UNRESOLVED_COLUMN</code> – column <code>Date</code> not found</b></summary>
+
+<br>
+
+Spark said it could not find `Date`, and suggested `Country`, `Region`, `Continent`, `SalesTerritoryKey`. Those are the columns of the **Territories** table. So the variable `df` was holding a different table than I expected (it had most likely been overwritten while looping over the files).
+
+**Fix:** stop relying on a shared `df` variable. Use the dictionary instead, so every table has a clear name: `dataframes["AdventureWorks_Calendar"]`.
+
+<p align="center"><img src="images/e02-error-column-date-not-found.png" width="700"></p>
+
+</details>
+
+<details>
+<summary><b>❌ Problem 4: <code>AZURE_INVALID_CREDENTIALS_CONFIGURATION</code></b></summary>
+
+<br>
+
+Spark could not open the storage account. The error mentioned the account name **`adventureworkdatalake01`**, but the OAuth settings were written for **`adventureworkdatalake1`**. Most likely a small typo: Spark was asked to open an account that had no matching credentials.
+
+**Fix:** use exactly the same storage account name everywhere. Now I keep it in one variable (`storage_account`) so it can't be mistyped twice.
+
+<p align="center"><img src="images/e03-error-invalid-credentials.png" width="700"></p>
+
+</details>
+
+---
+
+## 🧠 What I learned
+
+- ✅ How to design a **Medallion (Bronze → Silver → Gold)** pipeline.
+- ✅ Building **dynamic** ADF pipelines with **parameters, Lookup and ForEach**, not 10 copy-pasted activities.
+- ✅ Pulling data **directly from an HTTP / GitHub source** instead of uploading files by hand.
+- ✅ Securely connecting services: **App Registration (OAuth)** for Databricks and **Managed Identity** for Synapse.
+- ✅ The **`abfss://`** URL format for Azure Data Lake Gen2.
+- ✅ Reading many files with a **loop** in PySpark and transforming them (`withColumn`, `concat`, `groupBy`).
+- ✅ Creating **external tables** in Synapse: *credential → data source → file format*.
+- ✅ **Debugging real Azure and Spark errors** instead of only following a tutorial.
+
+---
+
+## ✅ Project status
+
+- [x] Azure resource group, storage account (ADLS Gen2), Data Factory
+- [x] Bronze layer: dynamic ADF pipeline (Lookup + ForEach + Copy) from GitHub
+- [x] Databricks workspace created (after fixing the failed deployment)
+- [x] Silver layer: connect to the lake, load all datasets, first transformations
+- [x] Synapse workspace created
+- [x] Synapse setup script (credential, data sources, file format)
+- [ ] Silver layer: finish all transformations and write to `silver`
+- [ ] Gold layer: create external tables / views in Synapse
+- [ ] Power BI dashboard
+
+---
+
+## 📁 Repository structure
+
+```
+adventure-works-azure-data-engineering/
+│
+├── README.md                      ← you are here
+├── .gitignore                     ← keeps secrets out of Git
+│
+├── data/                          ← the 10 source CSV files
+│   ├── README.md                  ← data dictionary (every column explained)
+│   └── AdventureWorks_*.csv
+│
+├── sql/
+│   └── synapse_setup.sql          ← credential, data sources, file format
+│
+├── notebooks/                     ← Databricks notebook(s) (SilverLayer)
+├── adf/                           ← exported Data Factory pipeline JSON
+├── config/
+│   └── credentials.example.txt    ← template only, NO real secrets
+│
+└── images/                        ← all screenshots used in this README
+```
+
+---
+
+## ▶️ How to run it yourself
+
+1. **Create an Azure free account** (you get free credits to learn).
+2. **Create the resources:** resource group → storage account (turn on *hierarchical namespace*) → containers `bronze`, `silver`, `gold` → Data Factory → Databricks → Synapse.
+3. **Upload the CSV files from [`data/`](data/) to your own GitHub repo**, so ADF can pull them using the raw file URL.
+4. **In ADF:** create an HTTP linked service (GitHub raw URL) and a Data Lake linked service, build the Lookup → ForEach → Copy pipeline, and run it. Check that the files land in `bronze`.
+5. **In Entra ID:** create an *App Registration* and a client secret. In the storage account, give the app the **Storage Blob Data Contributor** role.
+6. **In Databricks:** connect to the lake (Step 3.1), read the bronze data, transform it, and write it to `silver`.
+7. **In Synapse:** give the workspace's managed identity the **Storage Blob Data Contributor** role, then run [`sql/synapse_setup.sql`](sql/synapse_setup.sql) and create your external tables or views.
+8. **Connect Power BI** to Synapse and build your report.
+
+---
+
+## 🔒 Security note
+
+This repo does **not** contain any passwords, client secrets or keys. A template is provided in [`config/credentials.example.txt`](config/credentials.example.txt). Real values must stay out of Git (see `.gitignore`).
+
+If you ever commit a secret by mistake, **rotate it immediately**. Deleting it from the latest commit is not enough, because it stays in the Git history.
+
+---
+
+## 🙌 Credits
+
+- **AdventureWorks** sample data by Microsoft.
+- Project built while learning from a public end-to-end Azure Data Engineering tutorial, then extended with my own debugging and notes.
+
+---
+
+<div align="center">
+
+### 👩‍💻 Built by [Shalini Singh](https://github.com/Shalini-Singh11)
+
+⭐ If this project helped you, please give it a star!
+
+</div>
