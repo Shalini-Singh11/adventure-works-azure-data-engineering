@@ -531,7 +531,7 @@ Through this project, I gained practical experience in:
 
 ---
 
-## 👨‍💻 Author
+## 👩‍💻 Author
 
 **Shalini Singh**
 
