@@ -533,13 +533,13 @@ Through this project, I gained practical experience in:
 
 ## 👨‍💻 Author
 
-**Satyam Kumar**
+**Shalini Singh**
 
 Data Analyst | Azure Data Engineering | Data Analytics
 
 Currently working as a Data Analyst and continuously developing practical skills in cloud data engineering, analytics and Microsoft Azure.
 
-🔗 **LinkedIn:** [Connect with me](https://www.linkedin.com/in/satyam-kumar-09s29)
+🔗 **LinkedIn:** [Connect with me](https://www.linkedin.com/in/shalinisingh-dataeng/)
 
 ---
 
