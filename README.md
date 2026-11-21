@@ -1,372 +1,550 @@
 # 🚀 Adventure Works | End-to-End Azure Data Engineering Project
 
-**Building a cloud-based data engineering pipeline using Azure Data Factory, Azure Data Lake Storage Gen2, Azure Databricks, Apache Spark, Azure Synapse Analytics, and Power BI.**
+<p align="center">
+  <strong>Building an end-to-end cloud data engineering solution using Microsoft Azure, PySpark, SQL and Power BI.</strong>
+</p>
 
 <p align="center">
+  <img src="https://img.shields.io/badge/Azure-Cloud%20Platform-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white"/>
+  <img src="https://img.shields.io/badge/ADF-Data%20Pipeline-0078D4?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/ADLS-Gen2-00A4EF?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/Databricks-PySpark-E25A1C?style=for-the-badge&logo=databricks&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Synapse-SQL-0078D4?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/Power%20BI-Analytics-F2C811?style=for-the-badge&logo=powerbi&logoColor=black"/>
+</p>
 
-  <img src="https://img.shields.io/badge/Cloud-Microsoft%20Azure-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white" alt="Microsoft Azure" />
-  <img src="https://img.shields.io/badge/Architecture-Medallion-6C5CE7?style=for-the-badge" alt="Medallion Architecture" />
-  <img src="https://img.shields.io/badge/Processing-Apache%20Spark-E25A1C?style=for-the-badge&logo=apachespark&logoColor=white" alt="Apache Spark" />
-  <img src="https://img.shields.io/badge/Status-In%20Progress-orange?style=for-the-badge" alt="Project status: In Progress" />
-
+<p align="center">
+  <img src="https://img.shields.io/badge/Architecture-Medallion-8A2BE2?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/Language-Python%20%7C%20SQL-yellow?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/Project-Portfolio%20Project-success?style=for-the-badge"/>
 </p>
 
 ---
 
 ## 📌 Table of Contents
 
-- [Project Overview](#-project-overview)
-- [Business Problem](#-business-problem)
-- [Project Objectives](#-project-objectives)
-- [Data Source](#-data-source)
-- [Technology Stack](#-technology-stack)
-- [Data Architecture](#-data-architecture)
-- [End-to-End Workflow](#-end-to-end-workflow)
-- [Medallion Architecture](#-medallion-architecture)
-- [Data Ingestion with Azure Data Factory](#-data-ingestion-with-azure-data-factory)
-- [Data Transformation with Databricks](#-data-transformation-with-databricks)
-- [Analytics and Reporting](#-analytics-and-reporting)
-- [Repository Structure](#-repository-structure)
-- [Implementation Roadmap](#-implementation-roadmap)
-- [Security and Cost Management](#-security-and-cost-management)
-- [Key Learning Outcomes](#-key-learning-outcomes)
-- [Author](#-author)
+1. [Project Overview](#-project-overview)
+2. [Business Objective](#-business-objective)
+3. [Dataset](#-dataset)
+4. [Technology Stack](#-technology-stack)
+5. [Project Architecture](#-project-architecture)
+6. [End-to-End Implementation](#-end-to-end-implementation)
+7. [Medallion Architecture](#-medallion-architecture)
+8. [Azure Data Factory](#-1-azure-data-factory--data-ingestion)
+9. [Azure Data Lake Storage Gen2](#-2-azure-data-lake-storage-gen2)
+10. [Azure Databricks](#-3-azure-databricks--data-transformation)
+11. [Azure Synapse Analytics](#-4-azure-synapse-analytics--sql-serving)
+12. [Power BI](#-5-power-bi--business-intelligence)
+13. [Repository Structure](#-repository-structure)
+14. [Project Screenshots](#-project-screenshots)
+15. [Project Status](#-project-status)
+16. [Security and Data Preservation](#-security-and-data-preservation)
+17. [Key Learnings](#-key-learnings)
+18. [Author](#-author)
 
 ---
 
 ## 🎯 Project Overview
 
-Adventure Works is an end-to-end data engineering project designed to demonstrate how business data can be ingested, stored, transformed, and prepared for analytics using Microsoft Azure services.
+The **Adventure Works Azure Data Engineering Project** demonstrates the development of an end-to-end cloud data engineering workflow using Microsoft Azure.
 
-The solution uses CSV files containing information about customers, products, territories, sales, returns, and calendar dates. Azure Data Factory orchestrates data ingestion, Azure Data Lake Storage Gen2 organizes the data into processing layers, and Azure Databricks with Apache Spark performs data transformations.
+The project takes raw Adventure Works CSV datasets and processes them through multiple stages:
 
-The curated data is intended to be served through Azure Synapse Analytics and consumed through Power BI reports.
+- Data ingestion using Azure Data Factory.
+- Raw data storage using Azure Data Lake Storage Gen2.
+- Data transformation using Azure Databricks and PySpark.
+- Curated data preparation using the Medallion Architecture.
+- SQL-based data access using Azure Synapse Analytics.
+- Business intelligence and reporting using Power BI.
 
-The project follows the **Medallion Architecture — Bronze, Silver, and Gold** — to separate raw data from cleaned and analytics-ready data.
+The solution follows the **Bronze, Silver and Gold Medallion Architecture** to organize data from its raw state into transformed and analytical layers.
 
-**Project status:** In progress. This repository documents the solution design and implementation as the individual components are developed and validated.
+## 💼 Business Objective
 
-## 💼 Business Problem
+Organizations often receive data from multiple sources and in different formats. Before this data can support business decisions, it needs to be ingested, organized, transformed and made available for analytical reporting.
 
-Business data is often distributed across multiple files and related entities. Before it can support reliable reporting, it needs to be ingested consistently, organized, validated, and transformed into a structure suitable for analysis.
+This project demonstrates how to build a reusable cloud data pipeline to:
 
-This project addresses that challenge by designing a repeatable data pipeline that can:
+- Automate ingestion of multiple CSV files.
+- Maintain raw data for traceability.
+- Transform and standardize datasets.
+- Organize data into Bronze, Silver and Gold layers.
+- Prepare analytical datasets for SQL querying.
+- Support business reporting through Power BI.
 
-- Ingest multiple source files without creating a separate pipeline for every file.
-- Preserve raw data for traceability and reprocessing.
-- Clean and transform source data using distributed processing.
-- Organize related sales, customer, product, territory, and calendar information.
-- Prepare curated datasets for analytical queries and business reporting.
+## 📂 Dataset
 
-## 🎯 Project Objectives
+**Dataset:** Adventure Works Sample Business Dataset
 
-- Build an end-to-end cloud data engineering workflow.
-- Implement parameterized and reusable ingestion pipelines.
-- Apply Medallion Architecture using Bronze, Silver, and Gold layers.
-- Use Apache Spark and PySpark for data transformation.
-- Practice secure access between Azure services.
-- Prepare structured data for analytical workloads.
-- Integrate the data platform with Power BI for business intelligence.
+The project uses business datasets covering sales, customers, products, territories, returns and calendar information.
 
-## 📂 Data Source
-
-The project uses the **Adventure Works dataset**, a sample business dataset commonly used for learning relational data modeling, sales analysis, and data engineering.
-
-The source files cover business entities such as:
-
-| Data entity | Purpose |
+| Dataset | Business Purpose |
 |---|---|
 | Calendar | Date-based analysis |
-| Customers | Customer attributes and segmentation |
-| Products | Product-level information |
+| Customers | Customer information |
+| Products | Product-level analysis |
 | Product Categories | Product classification |
 | Product Subcategories | Detailed product classification |
 | Territories | Geographic sales analysis |
-| Sales | Sales transactions and performance |
+| Sales 2015 | Historical sales transactions |
+| Sales 2016 | Historical sales transactions |
+| Sales 2017 | Historical sales transactions |
 | Returns | Product return analysis |
 
-The sales data includes records associated with 2015, 2016, and 2017.
+**Source:** [Microsoft AdventureWorks Sample Databases](https://learn.microsoft.com/en-us/sql/samples/adventureworks-install-configure)
 
-The actual CSV file names and source URLs will be documented alongside the ingestion configuration so that the project can be reproduced.
+The CSV source repository used for ingestion should be referenced separately when publishing the exact source URL.
 
-**Dataset source:** [Adventure Works sample databases — Microsoft Learn](https://learn.microsoft.com/en-us/sql/samples/adventureworks-install-configure)
-
-> Note: The Microsoft sample database page provides Adventure Works database downloads and configuration guidance. The exact GitHub repository used for this project's CSV files should be linked separately once confirmed.
+---
 
 ## 🛠️ Technology Stack
 
-| Technology | Role in the project |
+| Technology | Purpose |
 |---|---|
-| Microsoft Azure | Cloud platform |
-| Azure Data Factory | Ingestion and pipeline orchestration |
-| Azure Data Lake Storage Gen2 | Raw, transformed, and curated data storage |
+| Microsoft Azure | Cloud infrastructure |
+| Azure Data Factory | Data ingestion and orchestration |
+| Azure Data Lake Storage Gen2 | Cloud data lake storage |
 | Azure Databricks | Distributed data processing |
-| Apache Spark / PySpark | Data reading, transformation, and writing |
-| Microsoft Entra ID | Application identity and authentication |
-| Azure Synapse Analytics | Analytical data serving and warehousing |
-| Power BI | Business intelligence and visualization |
-| Git and GitHub | Version control and project documentation |
+| Apache Spark | Large-scale data processing |
+| PySpark | Data transformation |
+| Azure Synapse Analytics | SQL analytics and data serving |
+| Power BI | Data visualization and reporting |
+| Microsoft Entra ID | Authentication and identity |
+| Git & GitHub | Version control and documentation |
 
-## 🏗️ Data Architecture
+---
 
-The architecture below represents the intended end-to-end design. Components will be marked as implemented only after they have been tested successfully.
+## 🏗️ Project Architecture
+
+The following diagram represents the overall data flow implemented and designed for this project.
 
 ```mermaid
 flowchart TD
-    A["Adventure Works CSV Files<br/>GitHub Repository"] --> B["Azure Data Factory<br/>HTTP Linked Service"]
+    A["Adventure Works CSV Files<br/>GitHub"] --> B["Azure Data Factory"]
 
-    B --> C["Lookup Activity<br/>Read JSON Configuration"]
-    C --> D["ForEach Activity<br/>Parameterized Copy Pipeline"]
-    D --> E["Azure Data Lake Storage Gen2<br/>BRONZE: Raw CSV Files"]
+    B --> C["Lookup Activity<br/>JSON Configuration"]
+    C --> D["ForEach Activity"]
+    D --> E["Parameterized Copy Activity"]
 
-    E --> F["Azure Databricks<br/>Apache Spark / PySpark"]
-    F --> G["SILVER: Cleaned Data<br/>Parquet Format"]
+    E --> F["ADLS Gen2<br/>BRONZE LAYER<br/>Raw CSV Files"]
 
-    G --> H["GOLD: Curated Data<br/>Analytics-Ready Datasets"]
-    H --> I["Azure Synapse Analytics<br/>SQL Analytics Layer"]
-    I --> J["Power BI<br/>Reports and Dashboards"]
+    F --> G["Azure Databricks<br/>Apache Spark / PySpark"]
+
+    G --> H["ADLS Gen2<br/>SILVER LAYER<br/>Transformed Parquet"]
+
+    H --> I["GOLD LAYER<br/>Curated Data"]
+
+    I --> J["Azure Synapse Analytics<br/>SQL Views / Analytics"]
+
+    J --> K["Power BI<br/>Business Dashboards"]
 
     style A fill:#E8F3FF,stroke:#0078D4,color:#172B4D
     style B fill:#E8F3FF,stroke:#0078D4,color:#172B4D
-    style E fill:#FFF1D6,stroke:#C58B00,color:#4A3400
-    style G fill:#E3F5E8,stroke:#269653,color:#163D26
-    style H fill:#F0E8FF,stroke:#805AD5,color:#32215C
-    style J fill:#FFF0E6,stroke:#E66B25,color:#5A2B0A
+    style F fill:#FFF1D6,stroke:#C58B00,color:#4A3400
+    style H fill:#E3F5E8,stroke:#269653,color:#163D26
+    style I fill:#F0E8FF,stroke:#805AD5,color:#32215C
+    style K fill:#FFF0E6,stroke:#E66B25,color:#5A2B0A
 ```
 
-### Architecture at a glance
+### Architecture workflow
 
-1. **Source:** CSV files hosted in GitHub.
-2. **Ingestion:** Azure Data Factory retrieves source files over HTTP.
-3. **Orchestration:** A JSON configuration and a ForEach activity drive reusable, parameterized copy operations.
-4. **Bronze:** Original source files are stored in Azure Data Lake Storage Gen2.
-5. **Silver:** Databricks and Spark clean and transform the raw data.
-6. **Gold:** Curated datasets are prepared for business analytics.
-7. **Serving:** Azure Synapse Analytics provides the intended SQL analytics layer.
-8. **Visualization:** Power BI connects to the analytical data to produce business reports.
+1. Source CSV files are hosted in GitHub.
+2. Azure Data Factory connects to the source through an HTTP linked service.
+3. A Lookup activity reads the JSON ingestion configuration.
+4. A ForEach activity processes each configuration entry.
+5. Copy activities dynamically load the files into the Bronze container.
+6. Azure Databricks reads Bronze data and performs PySpark transformations.
+7. Transformed datasets are stored in Silver in Parquet format.
+8. Gold data and SQL views support analytical workloads.
+9. Azure Synapse Analytics provides SQL-based access.
+10. Power BI supports business intelligence and visualization.
 
-The Gold-layer implementation and downstream integrations will be documented as they are completed.
+---
 
-## 🔄 End-to-End Workflow
+## 🔄 End-to-End Implementation
 
-### Phase 1 — Azure Environment and Storage Setup
+## 🥉 1. Azure Data Factory – Data Ingestion
 
-The foundation of the project consists of an Azure resource group, Azure Data Lake Storage Gen2, and the required service configurations.
+Azure Data Factory is used to ingest multiple Adventure Works CSV files from GitHub into Azure Data Lake Storage Gen2.
 
-Storage configuration used in the project:
+### Static ingestion pipeline
 
-- **Storage account:** `awstoragedatalake01`
-- **Region:** West India
-- **Performance:** Standard
-- **Redundancy:** Locally redundant storage (LRS)
-- **Hierarchical namespace:** Enabled
-- **Data organization:** Bronze, Silver, Gold, and a configuration area for ingestion parameters
+An initial pipeline named `GitToRaw` was created to validate source connectivity and destination configuration.
 
-The hierarchical namespace supports directory-based organization within the data lake.
+### Dynamic ingestion pipeline
 
-### Phase 2 — Data Ingestion with Azure Data Factory
+A reusable pipeline named `dynamicGitToRaw` was implemented to automate multi-file ingestion.
 
-The first ingestion step is to connect Azure Data Factory to the GitHub-hosted CSV files using an HTTP linked service.
+**Pipeline components:**
 
-The pipeline uses a Copy activity to transfer source data into the Bronze layer without applying business transformations.
+- HTTP Linked Service – connects to GitHub source files.
+- ADLS Gen2 Linked Service – connects to the destination data lake.
+- Parameterized Source Dataset – dynamically receives source file information.
+- Parameterized Sink Dataset – dynamically receives destination folder and file information.
+- JSON Configuration – stores ingestion metadata.
+- Lookup Activity – reads the configuration records.
+- ForEach Activity – iterates through the configuration.
+- Copy Data Activity – transfers the source files into Bronze.
 
-#### Static pipeline
+### Dynamic pipeline flow
 
-A static pipeline is used initially to validate connectivity, source configuration, the destination dataset, and the first successful file transfer.
+```text
+JSON Configuration
+       |
+       v
+Lookup Activity
+       |
+       v
+ForEach Activity
+       |
+       v
+Parameterized Copy Activity
+       |
+       v
+Azure Data Lake Storage Gen2
+       |
+       v
+Bronze Container
+```
 
-#### Dynamic pipeline
+**Key implementation:** Instead of creating a separate Copy activity for every CSV file, the pipeline uses parameterization and configuration-driven execution.
 
-The solution then moves towards a reusable, parameterized pipeline to avoid repeating the same Copy activity for every file.
+---
 
-The intended design includes:
+## 🥉 2. Azure Data Lake Storage Gen2
 
-- An HTTP linked service for the source.
-- An Azure Data Lake Storage Gen2 linked service for the destination.
-- Parameterized source and destination datasets.
-- A JSON configuration containing the source path, destination folder, and file name for each iteration.
-- A Lookup activity to read the JSON configuration.
-- A ForEach activity to iterate through the configuration entries.
-- A Copy activity inside the ForEach activity to transfer each file.
-- Pipeline execution monitoring and validation of the files in Bronze.
+Azure Data Lake Storage Gen2 is used as the centralized storage layer.
 
-This design makes it easier to add or manage files without duplicating the complete pipeline logic.
+The project storage structure contains four containers:
 
-### Phase 3 — Bronze Layer: Raw Data Storage
+| Container | Responsibility |
+|---|---|
+| bronze | Raw ingested CSV files |
+| silver | Transformed Parquet datasets |
+| gold | Curated analytical output |
+| parameters | JSON configuration for dynamic ingestion |
 
-The Bronze layer stores the ingested CSV files in their original form.
+### Bronze Layer
 
-Its primary purpose is to preserve the source data before transformation.
+- Stores the original CSV source files.
+- Maintains the raw data structure.
+- Acts as the starting point for transformation.
 
-Key principles:
+### Silver Layer
 
-- Retain the original source structure.
-- Organize files into logical folders.
-- Avoid applying business transformations during ingestion.
-- Keep source data available for validation and reprocessing.
+- Stores processed datasets in Parquet format.
+- Uses PySpark transformations.
+- Organizes the transformed datasets into individual folders.
 
-### Phase 4 — Silver Layer: Data Transformation
+### Gold Layer
 
-Azure Databricks and Apache Spark are used to read the Bronze CSV files, apply transformations, and write the processed datasets to Silver.
+- Stores curated analytical output.
+- Supports downstream SQL-based access.
+- Includes the Gold external table/view workflow where implemented.
 
-The transformation workflow covers:
+---
 
-- Reading CSV files with headers and schema inference where appropriate.
-- Loading related business datasets into Spark DataFrames.
-- Applying date transformations, including extracting month and year from calendar dates.
-- Practicing PySpark column operations and built-in functions.
-- Writing transformed data in Parquet format.
-- Validating the output and organizing the transformed datasets.
+## 🥈 3. Azure Databricks – Data Transformation
 
-Parquet is a column-oriented storage format suitable for analytical workloads.
+Azure Databricks and PySpark are used to process data stored in the Bronze layer.
 
-Additional data-quality checks, type validation, null handling, and business rules can be documented as they are implemented.
+The exported Silver transformation notebook is available in:
 
-### Phase 5 — Gold Layer: Curated Data
+`databricks/notebooks/SilverLayer.py`
 
-The Gold layer is intended to contain datasets prepared for business analysis.
+### Data processing workflow
 
-Potential analytical models include:
+**1. Data Access**
 
-- Sales performance by date, product, and territory.
-- Customer-level sales analysis.
-- Product category and subcategory performance.
-- Product return analysis.
-- Sales and return trends over time.
+- Configured OAuth-based access to ADLS Gen2.
+- Used application identity for storage authentication.
+- Read source datasets using ABFSS paths.
 
-The final Gold tables, business rules, and schema will be documented after the transformations and data models are implemented and validated.
+**2. Data Loading**
 
-### Phase 6 — Azure Synapse Analytics
+- Read CSV files with headers.
+- Used schema inference.
+- Loaded multiple datasets into Spark DataFrames.
+- Used directory listing to identify source folders.
 
-Azure Synapse Analytics is the planned serving layer for analytical data.
+**3. Calendar Transformation**
 
-The implementation will document:
+- Extracted Month from Date.
+- Extracted Year from Date.
+- Prepared calendar data for analytical use.
 
-- The selected Synapse SQL architecture.
-- Table creation and loading strategy.
-- Relationships between fact and dimension tables.
-- Analytical queries and validation.
-- The connection used by reporting tools.
+**4. Customer Transformation**
 
-The final serving design will reflect the Synapse components actually deployed.
+- Combined Prefix, FirstName and LastName.
+- Created a FullName column using PySpark functions.
 
-### Phase 7 — Power BI Reporting
+**5. Product Transformation**
 
-Power BI is the intended reporting layer for business users.
+- Practiced string splitting and column transformations.
+- Prepared product-related datasets.
 
-Potential reporting areas include:
+**6. Sales Transformation**
 
-- Sales trends and performance.
-- Customer and territory analysis.
-- Product and category performance.
-- Product returns and return trends.
+- Read the 2015, 2016 and 2017 sales files using a wildcard path.
+- Converted StockDate to timestamp.
+- Replaced the sales order number prefix.
+- Created a calculated multiplication column using OrderLineItem and OrderQuantity.
 
-Report screenshots, data model details, and dashboard findings will be added after the reports are built and validated.
+**7. Data Storage**
 
-## 🥉 Medallion Architecture
+- Wrote transformed datasets to the Silver container.
+- Used Parquet format.
+- Organized the outputs into individual dataset folders.
 
-| Layer | Data state | Primary responsibility |
+---
+
+## 🥇 4. Azure Synapse Analytics – SQL Serving
+
+Azure Synapse Analytics is used for SQL-based access to the data lake.
+
+SQL scripts were developed in Synapse Studio for schema creation and Gold-layer data access.
+
+### SQL development artifacts
+
+- Create Schema
+- Create Gold View
+- SQL Script 1
+
+### Gold-layer SQL workflow
+
+The project includes an external table workflow using Parquet data and SQL-based access.
+
+Example of the external table creation pattern:
+
+```sql
+CREATE EXTERNAL TABLE gold.extcalender
+WITH
+(
+    LOCATION = 'extcalender',
+    DATA_SOURCE = source_gold,
+    FILE_FORMAT = format_parquet
+)
+AS
+SELECT *
+FROM gold.calender;
+```
+
+The actual database objects, data source names and file formats should match the exported project SQL scripts.
+
+---
+
+## 📊 5. Power BI – Business Intelligence
+
+Power BI is included as the reporting and visualization layer of the project.
+
+The intended reporting areas include:
+
+- Executive Sales Overview.
+- Sales performance and trends.
+- Product and category analysis.
+- Customer analysis.
+- Regional and territory performance.
+- Return analysis.
+
+Add the final `.pbix` report and actual dashboard screenshots to the repository when available.
+
+---
+
+## 🏛️ Medallion Architecture
+
+| Layer | Description | Storage Format |
 |---|---|---|
-| Bronze | Raw | Preserve source data |
-| Silver | Cleaned and transformed | Improve consistency and usability |
-| Gold | Curated | Support analytical queries and reporting |
+| Bronze | Raw source data | CSV |
+| Silver | Cleaned and transformed data | Parquet |
+| Gold | Curated analytical data | Parquet / SQL views |
 
-The separation of layers improves maintainability, traceability, and the ability to reprocess data when transformation rules change.
+The Medallion Architecture separates ingestion, transformation and analytical serving, making the data workflow easier to maintain and understand.
+
+---
 
 ## 📁 Repository Structure
-
-The repository will be organized as follows as implementation artifacts become available:
 
 ```text
 adventure-works-azure-data-engineering/
 │
 ├── README.md
-├── .gitignore
-│
-├── docs/
-│   ├── architecture-diagram.png
-│   └── project-overview.md
 │
 ├── adf/
 │   ├── pipelines/
+│   │   ├── GitToRaw.json
+│   │   └── dynamicGitToRaw.json
+│   │
 │   ├── datasets/
+│   │   ├── source-dataset.json
+│   │   └── sink-dataset.json
+│   │
 │   ├── linked-services/
+│   │   ├── Httplinkedservice.json
+│   │   └── Storagedatalake.json
+│   │
 │   └── parameters/
 │
 ├── databricks/
 │   └── notebooks/
+│       └── SilverLayer.py
+│
+├── data/
+│   ├── bronze/
+│   ├── silver/
+│   └── gold/
 │
 ├── synapse/
 │   └── sql/
+│       ├── create-schema.sql
+│       ├── create-gold-view.sql
+│       └── sql-script-1.sql
 │
 ├── powerbi/
+│   ├── reports/
 │   └── screenshots/
 │
-└── screenshots/
-    ├── azure-storage/
-    ├── adf-pipelines/
-    └── databricks/
+└── docs/
+    ├── architecture/
+    │   └── project-architecture.png
+    │
+    └── screenshots/
+        ├── adf/
+        ├── adls/
+        ├── databricks/
+        ├── synapse/
+        └── powerbi/
 ```
 
-Only export and commit actual implementation artifacts. Do not commit secrets or sensitive connection details. Where configuration exports contain sensitive information, sanitize them before committing.
-
-## 🗺️ Implementation Roadmap
-
-The following checklist tracks the planned project milestones. Check off a task only after the corresponding implementation has been verified.
-
-- [ ] Complete and validate the Azure environment setup.
-- [ ] Configure Azure Data Lake Storage Gen2.
-- [ ] Establish source and destination linked services in Azure Data Factory.
-- [ ] Validate a static CSV ingestion pipeline.
-- [ ] Implement JSON-driven, parameterized ingestion.
-- [ ] Validate Lookup, ForEach, and Copy activity execution.
-- [ ] Verify source files in the Bronze layer.
-- [ ] Complete Databricks workspace and secure storage access configuration.
-- [ ] Read Bronze datasets using Spark.
-- [ ] Implement and validate Silver-layer transformations.
-- [ ] Build and validate Gold-layer analytical datasets.
-- [ ] Implement the Synapse analytical serving layer.
-- [ ] Build and validate Power BI reports.
-- [ ] Add architecture diagrams, screenshots, and technical documentation.
-- [ ] Document data-quality checks and end-to-end validation results.
-
-## 🔐 Security and Cost Management
-
-Security and cost control are important considerations when building cloud data platforms.
-
-- Use Microsoft Entra ID and appropriate access permissions where supported.
-- Avoid hardcoding credentials, tokens, or client secrets in notebooks and pipeline exports.
-- Keep local environment files and sensitive configuration out of Git.
-- Follow least-privilege access principles.
-- Monitor Azure resource usage and shut down or remove resources when they are no longer needed.
-- Review pricing before deploying or running paid Azure services.
-
-Azure trial credits and free-service allowances are subject to their applicable terms and limits. Always verify the current pricing and billing settings in your own subscription.
-
-## 📚 Key Learning Outcomes
-
-This project is designed to develop practical skills in:
-
-- Cloud data ingestion and orchestration.
-- Parameterized pipelines and configuration-driven processing.
-- Data Lake Storage Gen2 and hierarchical data organization.
-- Medallion Architecture.
-- Apache Spark and PySpark transformations.
-- Parquet-based analytical storage.
-- Identity-based access and secure cloud configuration.
-- SQL analytics and data warehouse integration.
-- Power BI reporting and end-to-end data platform design.
-- Git-based project documentation and version control.
-
-## 👨‍💻 Author
-
-**Shalini Singh**
-
-Data Analyst | Data Engineering | Azure Data Platform
-
-This project is part of my hands-on learning journey in cloud data engineering and analytics.
+*The structure above is the recommended organization. Keep only files and folders that you actually add to GitHub.*
 
 ---
 
-⭐ If you find this project useful, feel free to explore the repository and share feedback.
+## 📸 Project Screenshots
 
-**Note:** This project is a work in progress. Architecture diagrams describe the intended solution; implementation status and results will be updated as each stage is completed.
+Screenshots documenting the implementation will be maintained in the `docs/screenshots/` directory.
+
+| Project Component | Screenshot Evidence |
+|---|---|
+| Azure | Resource group and service overview |
+| Azure Data Factory | Dynamic pipeline and successful execution |
+| ADF Configuration | Lookup, ForEach and Copy activity settings |
+| ADLS Gen2 | Bronze, Silver and Gold containers |
+| Databricks | Notebook and transformation outputs |
+| Synapse | SQL scripts and query results |
+| Power BI | Completed dashboard pages |
+
+### Architecture Preview
+
+Add your architecture image here:
+
+`docs/architecture/project-architecture.png`
+
+```markdown
+![Adventure Works Architecture](docs/architecture/project-architecture.png)
+```
+
+### Azure Data Factory
+
+```markdown
+![ADF Dynamic Pipeline](docs/screenshots/adf/adf-dynamic-pipeline.png)
+```
+
+### Bronze, Silver and Gold
+
+```markdown
+![ADLS Gen2 Layers](docs/screenshots/adls/medallion-layers.png)
+```
+
+### Databricks
+
+```markdown
+![Databricks Transformations](docs/screenshots/databricks/silver-transformations.png)
+```
+
+### Synapse Analytics
+
+```markdown
+![Synapse SQL](docs/screenshots/synapse/synapse-sql-results.png)
+```
+
+### Power BI
+
+```markdown
+![Power BI Dashboard](docs/screenshots/powerbi/executive-sales-overview.png)
+```
+
+Replace these example image paths with the exact names of screenshots you upload.
+
+---
+
+## 📌 Project Status
+
+The following table distinguishes the work implemented and artifacts captured from components that require further validation.
+
+| Component | Status |
+|---|---|
+| Azure Data Lake Storage Gen2 | Implemented |
+| ADF static ingestion pipeline | Implemented |
+| ADF dynamic ingestion pipeline | Implemented |
+| Parameterized datasets | Implemented |
+| Lookup and ForEach activities | Implemented |
+| Bronze data ingestion | Implemented |
+| Databricks Silver transformation notebook | Exported |
+| Silver Parquet datasets | Preserved |
+| Gold data output | Preserved / SQL workflow documented |
+| Synapse SQL scripts | Exported |
+| Power BI final report | Verify final PBIX and dashboard artifacts |
+
+---
+
+## 🔐 Security and Data Preservation
+
+As part of project archival, Azure implementation artifacts and data files were backed up locally for future reference.
+
+Security practices:
+
+- Removed exposed credentials from exported notebooks.
+- Avoided committing client secrets and storage account keys.
+- Sanitized linked-service JSON before public sharing.
+- Avoided uploading passwords, SAS tokens and connection strings.
+- Kept project configuration and code separate from sensitive credentials.
+
+**Important:** Azure resource names, storage URLs and authentication settings should be reviewed before making the repository public. Any previously exposed client secret must be revoked or rotated.
+
+Large data files may be kept in a separate backup instead of GitHub if they exceed repository limits or redistribution conditions.
+
+---
+
+## 🎓 Key Learning Outcomes
+
+Through this project, I gained practical experience in:
+
+- Building dynamic and reusable pipelines using Azure Data Factory.
+- Implementing metadata-driven ingestion using Lookup and ForEach activities.
+- Working with Azure Data Lake Storage Gen2.
+- Applying Bronze, Silver and Gold Medallion Architecture.
+- Reading and transforming datasets using Apache Spark and PySpark.
+- Writing Parquet datasets to cloud storage.
+- Developing SQL-based data access using Azure Synapse Analytics.
+- Managing cloud project artifacts and configurations.
+- Documenting and preserving an end-to-end cloud data engineering project.
+
+---
+
+## 👨‍💻 Author
+
+**Satyam Kumar**
+
+Data Analyst | Azure Data Engineering | Data Analytics
+
+Currently working as a Data Analyst and continuously developing practical skills in cloud data engineering, analytics and Microsoft Azure.
+
+🔗 **LinkedIn:** [Connect with me](https://www.linkedin.com/in/satyam-kumar-09s29)
+
+---
+
+⭐ If you find this project useful, feel free to explore the repository and share your feedback.
+
+**Project:** Adventure Works – End-to-End Azure Data Engineering
+
+**Focus:** Cloud Data Engineering | Data Ingestion | Data Transformation | SQL Analytics | Business Intelligence
